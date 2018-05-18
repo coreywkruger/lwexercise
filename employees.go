@@ -38,7 +38,7 @@ func main() {
 
 	_, ok = os.LookupEnv("DSN")
 	if !ok {
-		os.Setenv("DSN", "root:password@0.0.0.0:5432/employees")
+		os.Setenv("DSN", "root:password@tcp(db:3306)/employees")
 	}
 
 	host := os.Getenv("HOST")

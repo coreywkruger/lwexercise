@@ -14,7 +14,7 @@ type DS struct {
 	db *sql.DB
 }
 
-// SalaryReport creates a foozer
+// SalaryReport
 func (ds *DS) SalaryReport() error {
 	return nil
 }
