@@ -1,9 +1,9 @@
 
-PROG = employees
+PROG = app
 GOFLAGS ?= $(GOFLAGS:)
 
 all: clean install build
-	./employees
+	./$(PROG)
 
 install:
 	glide i
@@ -13,3 +13,9 @@ build:
 
 clean:
 	go clean $(GOFLAGS) -i ./...
+
+test:
+	go test
+
+run:
+	./$(PROG)

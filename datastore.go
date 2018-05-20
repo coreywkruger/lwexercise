@@ -15,6 +15,17 @@ type DS struct {
 }
 
 // SalaryReport
-func (ds *DS) SalaryReport() error {
-	return nil
+type SalaryReport struct {
+	Department    string
+	SalaryExpense int
+}
+
+// SalaryReport
+func (ds *DS) SalaryReport(date string) (*SalaryReport, error) {
+	report := SalaryReport{}
+	err := ds.db.QueryRow("SELECT id, email, password FROM users WHERE email = $1;", email).Scan(&user.ID, &user.Email, &user.Password)
+	if err != nil {
+		return nil, errors.Wrap(err, "Could not get user.")
+	}
+	return &SalaryReport, nil
 }
