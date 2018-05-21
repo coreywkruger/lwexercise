@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  api:
+  golang_api:
     build:
       context: .
     volumes:
@@ -12,6 +12,18 @@ services:
     working_dir: /go/src/github.com/coreywkruger/employees
     depends_on:
       - db
+  api:
+    build:
+      context: .
+    volumes:
+      - $PWD:/usr/src/app
+    ports:
+      - "5000:5000"
+    command: python api.py
+    environment:
+      - MYSQL_DATABASE=employees
+      - MYSQL_USER=db
+      - MYSQL_PASSWORD=db
   db:
     image: mysql:5.7
     volumes:

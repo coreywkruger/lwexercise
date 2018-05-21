@@ -1,8 +1,10 @@
-FROM golang:alpine
+FROM python:3
 
-RUN apk add -U curl git alpine-sdk &&\
-	curl https://glide.sh/get | sh
+WORKDIR /usr/src/app
 
-RUN mkdir -p /go/src/github.com/coreywkruger/employees
-COPY . /go/src/github.com/coreywkruger/employees
-WORKDIR /go/src/github.com/coreywkruger/employees
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD [ "python", "./api.py" ]
