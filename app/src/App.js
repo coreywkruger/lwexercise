@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
-import logo from "./logo.svg";
+import numeral from "numeral";
 import "./App.css";
 
 const API_HOST = process.env.REACT_APP_API_HOST;
 const API_PORT = process.env.REACT_APP_API_PORT;
+// initialize api client
 const API = axios.create({
   baseURL: `http://${API_HOST}:${API_PORT}`
 });
@@ -19,36 +20,44 @@ class App extends Component {
       year: 2000,
       quarter: 1,
       report: null,
-      error: ""
+      error: null
     };
   }
   componentDidMount() {
+    // get all departments and place in dropdown
     API.get(`/departments`).then(res => {
       let departments = res.data;
-      this.setState({
-        departments
-      });
+      this.setState({ departments });
     });
   }
   selectDepartment(e) {
-    let dept_no = e.currentTarget.value;
-    let department = this.getDepartmentById(dept_no);
+    let department = this.getDepartmentById(e.currentTarget.value);
+    if (!department) {
+      return;
+    }
+    // select department to be used in report
     this.setState({
       dept_no: department.dept_no,
       dept_name: department.dept_name
     });
   }
-  getDepartmentById(id) {
+  getDepartmentById(dept_no) {
     let department = {};
     this.state.departments.forEach(dep => {
-      if (dep.dept_no === id) {
+      // select department by dept_no
+      if (dep.dept_no === dept_no) {
         department = dep;
       }
     });
     return department;
   }
   getReport() {
+    // clear error message if any
+    this.setState({ error: null });
+
     const { dept_no, year, quarter } = this.state;
+
+    // validate arguments
     if (!dept_no.length) {
       return this.setState({
         error: "Please select a department."
@@ -63,11 +72,11 @@ class App extends Component {
       });
     }
 
+    // make request to the api
     API.get(`/report/${dept_no}?year=${year}&quarter=${quarter}`).then(res => {
       let report = res.data;
-      this.setState({
-        report
-      });
+      // display report
+      this.setState({ report });
     });
   }
   onChange(e) {
@@ -76,64 +85,71 @@ class App extends Component {
     });
   }
   render() {
+    // departments for dropdown selection
     const departments = this.state.departments.map((department, index) => (
       <option key={index} value={department.dept_no}>
         {department.dept_name}
       </option>
     ));
-    const report = this.state.report;
-    const error = this.state.error;
+    const { report, error } = this.state;
 
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <select
-          value={this.state.dept_no}
-          onChange={this.selectDepartment.bind(this)}
-        >
-          <option value="">Select a department</option>
-          {departments}
-        </select>
-        <input
-          name="year"
-          value={this.state.year}
-          placeholder="Year"
-          onChange={this.onChange.bind(this)}
-        />
-        <input
-          name="quarter"
-          value={this.state.quarter}
-          placeholder="Quarter"
-          onChange={this.onChange.bind(this)}
-        />
-        <input
-          type="button"
-          value="Get Report"
-          onClick={this.getReport.bind(this)}
-        />
-        {error.length ? <div>{error}</div> : null}
+      <div className="container">
+        <div className="heading">
+          Salary Quarterly Report:
+        </div>
+        <div className="form">
+          <select
+            className="field"
+            value={this.state.dept_no}
+            onChange={this.selectDepartment.bind(this)}
+          >
+            <option value="">Select a department</option>
+            {departments}
+          </select>
+          <input
+            className="field"
+            name="year"
+            value={this.state.year}
+            placeholder="Year"
+            onChange={this.onChange.bind(this)}
+          />
+          <input
+            className="field"
+            name="quarter"
+            value={this.state.quarter}
+            placeholder="Quarter"
+            onChange={this.onChange.bind(this)}
+          />
+          <input
+            className="field"
+            type="button"
+            value="Get Report"
+            onClick={this.getReport.bind(this)}
+          />
+          {error ? <div>{error}</div> : null}
+        </div>
         {report ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Department Name:</th>
-                <th>Year:</th>
-                <th>Quarter:</th>
-                <th>Salary Paid:</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{report.dept_name || this.state.dept_name}</td>
-                <td>{report.year}</td>
-                <td>{report.quarter}</td>
-                <td>${report.salary_paid}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="report">
+            <table>
+              <thead className="header">
+                <tr>
+                  <th>Department:</th>
+                  <th>Year:</th>
+                  <th>Quarter:</th>
+                  <th>Salary Paid:</th>
+                </tr>
+              </thead>
+              <tbody className="body">
+                <tr>
+                  <td>{report.dept_name || this.state.dept_name}</td>
+                  <td>{report.year}</td>
+                  <td>{report.quarter}</td>
+                  <td>${numeral(report.salary_paid).format("0,0.00")}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         ) : null}
       </div>
     );
