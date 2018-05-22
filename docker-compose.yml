@@ -1,17 +1,6 @@
 version: "3.3"
 
 services:
-  golang_api:
-    build:
-      context: .
-    volumes:
-      - $PWD:/go/src/github.com/coreywkruger/employees
-    ports:
-      - "3000:3000"
-    command: make
-    working_dir: /go/src/github.com/coreywkruger/employees
-    depends_on:
-      - db
   api:
     build:
       context: .
