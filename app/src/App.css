@@ -21,12 +21,14 @@
 
 .container .form .field {
   padding: 0px 5px 0px 5px;
-  height: 30px;
+  height: 40px;
+  background-color: #fff;
+  border: 1px solid #ddd;
   margin-top: 5px;
 }
 
 .container .report {
-  margin: 20px auto 0px auto;
+  margin: 50px auto 0px auto;
   width: 100%;
 }
 
@@ -34,17 +36,18 @@
   width: 100%;
 }
 
-.container .report > table, th, td {
-  border: 1px solid #ddd;
+.container .report td {
+  border-bottom: 1px solid #ddd;
   text-align: left;
-}
-
-.container .report > table th, td {
   padding: 10px;
 }
 
+.container .report td.header {
+  font-weight: bold;
+}
+
 .loading {
-  margin: 50px auto 0px auto;
+  margin: 100px auto 0px auto;
 	animation: fadeIn 0.5s infinite alternate;
 	opacity: 0;
 }

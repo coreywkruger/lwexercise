@@ -132,19 +132,21 @@ class App extends Component {
         {report ? (
           <div className="report">
             <table>
-              <thead className="header">
+              <tbody>
                 <tr>
-                  <th>Department:</th>
-                  <th>Year:</th>
-                  <th>Quarter:</th>
-                  <th>Salary Paid:</th>
-                </tr>
-              </thead>
-              <tbody className="body">
-                <tr>
+                  <td className="header">Department Name:</td>
                   <td>{report.dept_name || this.state.dept_name}</td>
+                </tr>
+                <tr>
+                  <td className="header">Year:</td>
                   <td>{report.year}</td>
+                </tr>
+                <tr>
+                  <td className="header">Quarter:</td>
                   <td>{report.quarter}</td>
+                </tr>
+                <tr>
+                  <td className="header">Salary Paid:</td>
                   <td>${numeral(report.salary_paid).format("0,0.00")}</td>
                 </tr>
               </tbody>
