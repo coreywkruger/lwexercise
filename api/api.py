@@ -41,6 +41,23 @@ def report(department):
 
     return jsonify(year=report[0], quarter=report[1], department=report[2], salary_paid=float(report[3]))
 
+# define department list route
+@app.route("/departments", methods=["GET"])
+@response_headers
+def departments():
+    conn = mysqlConnection()
+    cursor = conn.cursor()
+    cursor.execute("select dept_no, dept_name from departments")
+
+    results = []
+    for (dept_no, dept_name) in cursor:
+        results.append({
+            "dept_no": dept_no,
+            "dept_name": dept_name
+        })
+
+    return jsonify(results)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
