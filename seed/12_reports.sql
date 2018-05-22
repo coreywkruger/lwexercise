@@ -9,7 +9,8 @@ drop procedure if exists get_salaries_in_range;
 create procedure get_salaries_in_range(start date, end date, dept varchar(4))
 begin
 
-    create temporary table if not exists salary_ranges (
+    drop temporary table if exists salary_ranges;
+    create temporary table salary_ranges (
         emp_no int,
         year int,
         dept_no varchar(4),
@@ -60,8 +61,8 @@ drop procedure if exists get_salary_sums;
 create procedure get_salary_sums(year int, quarter int, dept varchar(4))
 begin
 
-    set @startDate = concat(year, '-01-01');
-    set @endDate = date_sub(date_add(@startDate, INTERVAL quarter + 1 QUARTER), INTERVAL 1 DAY);
+    set @startDate = date_add(concat(year, '-01-01'), INTERVAL quarter - 1 QUARTER);
+    set @endDate = date_sub(date_add(@startDate, INTERVAL quarter QUARTER), INTERVAL 1 DAY);
 
     call get_salaries_in_range(@startDate, @endDate, dept);
 
