@@ -13,6 +13,8 @@ services:
       - MYSQL_DATABASE=employees
       - MYSQL_USER=db
       - MYSQL_PASSWORD=db
+    depends_on:
+      - db
   app:
     build:
       context: ./app
