@@ -20,6 +20,7 @@ class App extends Component {
       year: 2000,
       quarter: 1,
       report: null,
+      loading: false,
       error: null
     };
   }
@@ -53,7 +54,7 @@ class App extends Component {
   }
   getReport() {
     // clear error message if any
-    this.setState({ error: null });
+    this.setState({ error: null, loading: true, report: null });
 
     const { dept_no, year, quarter } = this.state;
 
@@ -76,7 +77,7 @@ class App extends Component {
     API.get(`/report/${dept_no}?year=${year}&quarter=${quarter}`).then(res => {
       let report = res.data;
       // display report
-      this.setState({ report });
+      this.setState({ report, loading: false });
     });
   }
   onChange(e) {
@@ -91,13 +92,11 @@ class App extends Component {
         {department.dept_name}
       </option>
     ));
-    const { report, error } = this.state;
+    const { report, loading, error } = this.state;
 
     return (
       <div className="container">
-        <div className="heading">
-          Salary Quarterly Report:
-        </div>
+        <div className="heading">Salary Quarterly Report:</div>
         <div className="form">
           <select
             className="field"
@@ -129,6 +128,7 @@ class App extends Component {
           />
           {error ? <div>{error}</div> : null}
         </div>
+        {loading ? <div className="loading">Loading ...</div> : null}
         {report ? (
           <div className="report">
             <table>
