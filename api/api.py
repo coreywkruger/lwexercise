@@ -1,15 +1,11 @@
 import os
 from functools import wraps
-from flask import Flask, make_response
+from flask import Flask, make_response, g
 from flask import request
 from flask import jsonify
 import mysql.connector
 
 app = Flask(__name__)
-
-# initialize new connection to the database
-def mysqlConnection():
-    return mysql.connector.connect(host='db', database=os.environ.get('MYSQL_DATABASE'), user=os.environ.get('MYSQL_USER'), password=os.environ.get('MYSQL_PASSWORD'))
 
 # Setup cors
 def response_headers(f):
@@ -20,6 +16,29 @@ def response_headers(f):
         return response
     return cors
 
+# initialize new connection to the database
+def mysql_connection():
+    return mysql.connector.connect(
+        host='db', 
+        database=os.environ.get('MYSQL_DATABASE'), 
+        user=os.environ.get('MYSQL_USER'), 
+        password=os.environ.get('MYSQL_PASSWORD')
+    )
+
+# get database connection if exists
+def get_db():
+    db = g.get("database", None)
+    if db is None:
+        db = g.database = mysql_connection()
+    return db
+
+# close database connection
+@app.teardown_appcontext
+def teardown_db(exception):
+    db = g.get("database", None)
+    if db is not None:
+        db.close()
+
 # define report route
 @app.route("/report/<dept_no>", methods=["GET"])
 @response_headers
@@ -28,7 +47,7 @@ def report(dept_no):
     year = request.args.get('year', default=2000, type=int)
     quarter = request.args.get('quarter', default=1, type=int)
 
-    conn = mysqlConnection()
+    conn = get_db()
     cursor = conn.cursor()
     cursor.callproc('get_salary_sums', (year, quarter, dept_no))
     results = {"dept_no": dept_no, "year": year, "quarter": quarter, "dept_name": "", "salary_paid": 0}
@@ -52,7 +71,7 @@ def report(dept_no):
 @app.route("/departments", methods=["GET"])
 @response_headers
 def departments():
-    conn = mysqlConnection()
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("select dept_no, dept_name from departments")
 
@@ -64,7 +83,6 @@ def departments():
         })
 
     return jsonify(results)
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
