@@ -3,9 +3,9 @@ version: "3.3"
 services:
   api:
     build:
-      context: .
+      context: ./api
     volumes:
-      - $PWD:/usr/src/app
+      - $PWD/api:/usr/src/app
     ports:
       - "5000:5000"
     command: python api.py
@@ -13,6 +13,16 @@ services:
       - MYSQL_DATABASE=employees
       - MYSQL_USER=db
       - MYSQL_PASSWORD=db
+  app:
+    build:
+      context: ./app
+    volumes:
+      - $PWD/app:/usr/src/app
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_HOST=localhost
+      - REACT_APP_API_PORT=5000
   db:
     image: mysql:5.7
     volumes:

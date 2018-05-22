@@ -1,8 +1,21 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import axios from "axios";
+import logo from "./logo.svg";
+import "./App.css";
+
+const API_HOST = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
 
 class App extends Component {
+  componentDidMount() {
+    const API = axios.create({
+      baseURL: `http://${API_HOST}:${API_PORT}`
+    });
+
+    API.get(`/report/${"d005"}?year=${2000}&quarter=${1}`).then(res =>
+      console.log(res)
+    );
+  }
   render() {
     return (
       <div className="App">
