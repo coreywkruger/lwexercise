@@ -39,7 +39,7 @@ def report(department):
 
     report = results[0]
 
-    return jsonify(year=report[0], quarter=report[1], department=report[2], salary_paid=float(report[3]))
+    return jsonify(year=report[0], quarter=report[1], dept_no=report[2], dept_name=report[3], salary_paid=float(report[4]))
 
 # define department list route
 @app.route("/departments", methods=["GET"])

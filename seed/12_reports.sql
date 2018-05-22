@@ -13,11 +13,12 @@ begin
         emp_no int,
         year int,
         dept_no varchar(4),
+        dept_name varchar(40),
         salary_paid decimal(65, 2)
     );
     
-    insert into salary_ranges (emp_no, year, dept_no, salary_paid) 
-    select s.emp_no, year(start) as year, de.dept_no as dept_no,
+    insert into salary_ranges (emp_no, year, dept_no, dept_name, salary_paid) 
+    select s.emp_no, year(start) as year, de.dept_no as dept_no, d.dept_name as dept_name,
     case
         when 
             datediff(start, s.from_date) > 0 and datediff(s.to_date, start) > 0 
@@ -33,13 +34,16 @@ begin
             then round(s.salary * datediff(s.to_date, s.from_date) / 365, 2)
         else null
     end as salary_paid 
-    from salaries as s inner join dept_emp as de
-    on 
-        datediff(s.to_date, start) > 0 and 
-        datediff(end, s.from_date) > 0 and
-        s.emp_no = de.emp_no and
-        de.dept_no = dept;
-
+    from salaries as s 
+        inner join dept_emp as de
+            on 
+                datediff(s.to_date, start) > 0 and 
+                datediff(end, s.from_date) > 0 and
+                s.emp_no = de.emp_no and
+                de.dept_no = dept
+        inner join departments as d
+            on 
+                de.dept_no = d.dept_no;
 end; //
 
 drop procedure if exists get_salary_sums;
@@ -61,7 +65,7 @@ begin
 
     call get_salaries_in_range(@startDate, @endDate, dept);
 
-    select year, quarter, sr.dept_no as dept_no, sum(sr.salary_paid) as salary_paid 
+    select year, quarter, sr.dept_no as dept_no, sr.dept_name as dept_name, sum(sr.salary_paid) as salary_paid 
     from salary_ranges as sr
-    group by dept_no;
+    group by dept_no, dept_name;
 end; // 
