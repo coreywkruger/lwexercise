@@ -1,6 +1,19 @@
 version: "3.3"
 
 services:
+  app:
+    build:
+      context: ./app
+    volumes:
+      - $PWD/app:/usr/src/app
+    ports:
+      - "3000:3000"
+    command: yarn start
+    environment:
+      - REACT_APP_API_HOST=localhost
+      - REACT_APP_API_PORT=5000
+    depends_on:
+      - api
   api:
     build:
       context: ./api
@@ -15,16 +28,6 @@ services:
       - MYSQL_PASSWORD=db
     depends_on:
       - db
-  app:
-    build:
-      context: ./app
-    volumes:
-      - $PWD/app:/usr/src/app
-    ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_API_HOST=localhost
-      - REACT_APP_API_PORT=5000
   db:
     image: mysql:5.7
     volumes:
