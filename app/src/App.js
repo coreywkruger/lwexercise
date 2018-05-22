@@ -13,7 +13,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      department: "",
+      dept_name: "",
+      dept_no: "",
       departments: [],
       year: 2000,
       quarter: 1,
@@ -30,14 +31,25 @@ class App extends Component {
     });
   }
   selectDepartment(e) {
-    let department = e.currentTarget.value;
+    let dept_no = e.currentTarget.value;
+    let department = this.getDepartmentById(dept_no);
     this.setState({
-      department
+      dept_no: department.dept_no,
+      dept_name: department.dept_name
     });
   }
+  getDepartmentById(id) {
+    let department = {};
+    this.state.departments.forEach(dep => {
+      if (dep.dept_no === id) {
+        department = dep;
+      }
+    });
+    return department;
+  }
   getReport() {
-    let { department, year, quarter } = this.state;
-    if (!department.length) {
+    const { dept_no, year, quarter } = this.state;
+    if (!dept_no.length) {
       return this.setState({
         error: "Please select a department."
       });
@@ -51,10 +63,7 @@ class App extends Component {
       });
     }
 
-    API.get(
-      `/report/${this.state.department}?year=${this.state.year}&quarter=${this
-        .state.quarter}`
-    ).then(res => {
+    API.get(`/report/${dept_no}?year=${year}&quarter=${quarter}`).then(res => {
       let report = res.data;
       this.setState({
         report
@@ -82,7 +91,7 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <select
-          value={this.state.department}
+          value={this.state.dept_no}
           onChange={this.selectDepartment.bind(this)}
         >
           <option value="">Select a department</option>
@@ -118,7 +127,7 @@ class App extends Component {
             </thead>
             <tbody>
               <tr>
-                <td>{report.dept_name}</td>
+                <td>{report.dept_name || this.state.dept_name}</td>
                 <td>{report.year}</td>
                 <td>{report.quarter}</td>
                 <td>${report.salary_paid}</td>

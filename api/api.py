@@ -21,25 +21,32 @@ def response_headers(f):
     return cors
 
 # define report route
-@app.route("/report/<department>", methods=["GET"])
+@app.route("/report/<dept_no>", methods=["GET"])
 @response_headers
-def report(department):
+def report(dept_no):
 
     year = request.args.get('year', default=2000, type=int)
     quarter = request.args.get('quarter', default=1, type=int)
 
     conn = mysqlConnection()
     cursor = conn.cursor()
-    cursor.callproc('get_salary_sums', (year, quarter, department))
-    results = []
+    cursor.callproc('get_salary_sums', (year, quarter, dept_no))
+    results = {"dept_no": dept_no, "year": year, "quarter": quarter, "dept_name": "", "salary_paid": 0}
 
     # print out the result
     for result in cursor.stored_results():
-        results.append(result.fetchall()[0])
+        response = result.fetchall()
+        if len(response) > 0:
+            resultSet = response[0]
+            results = {
+                "year": resultSet[0], 
+                "quarter": resultSet[1], 
+                "dept_no": resultSet[2], 
+                "dept_name": resultSet[3], 
+                "salary_paid": float(resultSet[4])
+            }
 
-    report = results[0]
-
-    return jsonify(year=report[0], quarter=report[1], dept_no=report[2], dept_name=report[3], salary_paid=float(report[4]))
+    return jsonify(results)
 
 # define department list route
 @app.route("/departments", methods=["GET"])
