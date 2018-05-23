@@ -17,8 +17,8 @@ class App extends Component {
       dept_name: "",
       dept_no: "",
       departments: [],
-      year: 2000,
-      quarter: 1,
+      year: null,
+      quarter: null,
       report: null,
       loading: false,
       error: null
@@ -61,15 +61,18 @@ class App extends Component {
     // validate arguments
     if (!dept_no.length) {
       return this.setState({
-        error: "Please select a department."
+        error: "Please select a department.",
+        loading: false
       });
     } else if (!year || year.toString().length !== 4) {
       return this.setState({
-        error: "Please enter a valid year."
+        error: "Please enter a valid year.",
+        loading: false
       });
     } else if (!quarter || quarter > 4 || quarter < 1) {
       return this.setState({
-        error: "Please enter a valid quarter."
+        error: "Please enter a valid quarter.",
+        loading: false
       });
     }
 
@@ -84,6 +87,12 @@ class App extends Component {
     this.setState({
       [e.currentTarget.name]: e.currentTarget.value
     });
+  }
+  onQuarterChange(e) {
+    let quarter = parseInt(e.currentTarget.value);
+    if (quarter > 4) quarter = 4;
+    if (quarter < 1) quarter = 1;
+    this.setState({ quarter: quarter });
   }
   render() {
     // departments for dropdown selection
@@ -111,6 +120,7 @@ class App extends Component {
             name="year"
             value={this.state.year}
             placeholder="Year"
+            type="year"
             onChange={this.onChange.bind(this)}
           />
           <input
@@ -118,7 +128,8 @@ class App extends Component {
             name="quarter"
             value={this.state.quarter}
             placeholder="Quarter"
-            onChange={this.onChange.bind(this)}
+            type="number"
+            onChange={this.onQuarterChange.bind(this)}
           />
           <input
             className="field"
@@ -126,7 +137,7 @@ class App extends Component {
             value="Get Report"
             onClick={this.getReport.bind(this)}
           />
-          {error ? <div>{error}</div> : null}
+          {error ? <div className="error">{error}</div> : null}
         </div>
         {loading ? <div className="loading">Loading ...</div> : null}
         {report ? (

@@ -40,6 +40,7 @@ begin
             on 
                 datediff(s.to_date, start) > 0 and 
                 datediff(end, s.from_date) > 0 and
+                datediff(curdate(), s.to_date) > 0 and 
                 s.emp_no = de.emp_no and
                 de.dept_no = dept
         inner join departments as d

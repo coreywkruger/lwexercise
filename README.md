@@ -2,7 +2,7 @@
 
 Execute:
 ```bash
-docker-compose up
+docker-compose run --service-ports app
 ```
 
 Wait a few moments for everything to pull, build, and install. Then navigate to http://localhost:3000/.

@@ -46,6 +46,11 @@
   font-weight: bold;
 }
 
+.container .error {
+  margin: 20px auto 0px auto;
+  color: red;
+}
+
 .loading {
   margin: 100px auto 0px auto;
 	animation: fadeIn 0.5s infinite alternate;
