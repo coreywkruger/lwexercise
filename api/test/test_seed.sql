@@ -1,5 +1,3 @@
-use test_employees;
-
 insert into departments 
         (dept_no, dept_name) 
     values 
