@@ -47,8 +47,8 @@ def report(dept_no):
     year = request.args.get('year', default=2000, type=int)
     quarter = request.args.get('quarter', default=1, type=int)
 
-    conn = get_db()
-    cursor = conn.cursor()
+    db = get_db()
+    cursor = db.cursor()
     cursor.callproc('get_salary_sums', (year, quarter, dept_no))
     results = {"dept_no": dept_no, "year": year, "quarter": quarter, "dept_name": "", "salary_paid": 0}
 
@@ -64,7 +64,9 @@ def report(dept_no):
                 "dept_name": resultSet[3], 
                 "salary_paid": float(resultSet[4])
             }
-
+    
+    cursor.close()
+    
     return jsonify(results)
 
 # define department list route
