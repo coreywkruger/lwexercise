@@ -89,7 +89,7 @@ class App extends Component {
     });
   }
   onQuarterChange(e) {
-    let quarter = parseInt(e.currentTarget.value);
+    let quarter = parseInt(e.currentTarget.value, 10);
     if (quarter > 4) quarter = 4;
     if (quarter < 1) quarter = 1;
     this.setState({ quarter: quarter });
