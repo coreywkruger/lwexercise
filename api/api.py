@@ -50,24 +50,36 @@ def report(dept_no):
     db = get_db()
     cursor = db.cursor()
     cursor.callproc('get_salary_sums', (year, quarter, dept_no))
-    results = {"dept_no": dept_no, "year": year, "quarter": quarter, "dept_name": "", "salary_paid": 0}
 
+    # default report layout
+    report = {
+        "dept_no": dept_no, 
+        "year": year, 
+        "quarter": quarter, 
+        "dept_name": "", 
+        "salary_paid": 0
+    }
+
+    # result sets from sproc
+    result_sets = []
     # print out the result
     for result in cursor.stored_results():
-        response = result.fetchall()
-        if len(response) > 0:
-            resultSet = response[0]
-            results = {
-                "year": resultSet[0], 
-                "quarter": resultSet[1], 
-                "dept_no": resultSet[2], 
-                "dept_name": resultSet[3], 
-                "salary_paid": float(resultSet[4])
-            }
-    
+        result_sets.append(result.fetchall())
+
     cursor.close()
-    
-    return jsonify(results)
+
+    if len(result_sets) > 0:
+        result = result_sets[0][0]
+        dept_name = ''.join(result[3])
+        report = {
+            "dept_no": dept_no, 
+            "year": year, 
+            "quarter": quarter, 
+            "dept_name": dept_name, 
+            "salary_paid": float(result[4])
+        }
+
+    return jsonify(report)
 
 # define department list route
 @app.route("/departments", methods=["GET"])
