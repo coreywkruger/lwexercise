@@ -1,11 +1,11 @@
 pipeline {
   agent any
   stages {
-    stage('do your mom') {
+    stage('do thing') {
       when { branch 'master' }
       steps {
         script {
-          sh "echo 'fuck you'"
+          sh "echo 'hello world'"
         }
       }
     }
