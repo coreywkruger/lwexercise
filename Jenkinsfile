@@ -5,7 +5,7 @@ pipeline {
       when { branch 'master' }
       steps {
         script {
-          sh "echo 'hello world'"
+          sh "exit 1"
         }
       }
     }
